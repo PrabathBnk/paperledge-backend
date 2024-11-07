@@ -36,4 +36,20 @@ public class BookController {
     public Book getBookById(@RequestParam("id") String id){
         return service.getBookById(id);
     }
+
+    @PutMapping
+    public ResponseEntity<String> update(@RequestParam("book") String bookAsString, @RequestParam("image") MultipartFile bookImage){
+        try {
+            Book book = mapper.readValue(bookAsString, Book.class);
+            service.update(book, bookImage);
+            return new ResponseEntity<>("Book added successfully", HttpStatus.ACCEPTED);
+        } catch (IOException e) {
+            return new ResponseEntity<>("Something went wrong", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @DeleteMapping
+    public void deleteById(@RequestParam("id") String id){
+        service.deleteById(id);
+    }
 }

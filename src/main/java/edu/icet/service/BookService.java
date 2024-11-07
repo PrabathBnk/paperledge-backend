@@ -8,4 +8,6 @@ import java.io.IOException;
 public interface BookService {
     void addBook(Book book, MultipartFile image) throws IOException;
     Book getBookById(String id);
+    void update(Book book, MultipartFile image) throws IOException;
+    void deleteById(String id);
 }

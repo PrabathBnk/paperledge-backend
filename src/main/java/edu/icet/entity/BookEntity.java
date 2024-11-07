@@ -32,19 +32,19 @@ public class BookEntity {
     @Column(nullable = false)
     private String image;
 
-    @ManyToOne(cascade = CascadeType.ALL, optional = false, fetch = FetchType.EAGER)
+    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.PERSIST}, optional = false, fetch = FetchType.EAGER)
     @JsonBackReference("genre")
     private GenreEntity genre;
 
-    @ManyToOne(cascade = CascadeType.ALL, optional = false, fetch = FetchType.EAGER)
+    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.PERSIST}, optional = false, fetch = FetchType.EAGER)
     @JsonBackReference("author")
     private AuthorEntity author;
 
-    @ManyToOne(cascade = CascadeType.ALL, optional = false, fetch = FetchType.EAGER)
+    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.PERSIST}, optional = false, fetch = FetchType.EAGER)
     @JsonBackReference("publication")
     private PublicationEntity publication;
 
-    @OneToOne(cascade = CascadeType.ALL, optional = false, fetch = FetchType.EAGER)
+    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.PERSIST}, optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "owner_user")
     @JsonBackReference("user")
     private UserEntity ownerUser;

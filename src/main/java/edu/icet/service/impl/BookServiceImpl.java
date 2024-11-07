@@ -28,28 +28,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public void addBook(Book book, MultipartFile image) throws IOException {
-        //Convert Book into BookEntity
-        BookEntity bookEntity = mapper.convertValue(book, BookEntity.class);
-
-        //Set ownerUser to bookEntity
-        bookEntity.setOwnerUser(mapper.convertValue(userRepository.findById(book.getOwnerUser().getId()), UserEntity.class));
-        //Set genreEntity to bookEntity
-        bookEntity.setGenre(mapper.convertValue(genreRepository.findById(book.getGenre().getId()), GenreEntity.class));
-        //Set publicationEntity to bookEntity
-        bookEntity.setPublication(mapper.convertValue(publicationRepository.findById(book.getPublication().getId()), PublicationEntity.class));
-        //Set authorEntity to bookEntity
-        bookEntity.setAuthor(mapper.convertValue(authorRepository.findById(book.getAuthor().getId()), AuthorEntity.class));
-
-        //Set image file path to bookEntity
-        String saveDir = "src/main/resources/static/images/book/";
-        String originalFileName = StringUtils.cleanPath(Objects.requireNonNull(image.getOriginalFilename()));
-        String imageName = (book.getId() + "-" + originalFileName.replace(" ", "_"));
-        bookEntity.setImage(imageName);
-
-        //Save image in the file system
-        FileSaveUtil.saveFile(saveDir, imageName, image);
-
-        repository.save(bookEntity);
+        repository.save(setEntityInstances(mapper.convertValue(book, BookEntity.class), book, image));
     }
 
     @Override
@@ -68,5 +47,38 @@ public class BookServiceImpl implements BookService {
         book.setOwnerUser(mapper.convertValue(bookEntity.getOwnerUser(), User.class));
 
         return book;
+    }
+
+    @Override
+    public void update(Book book, MultipartFile image) throws IOException {
+        repository.save(setEntityInstances(mapper.convertValue(book, BookEntity.class), book, image));
+    }
+
+    @Override
+    public void deleteById(String id) {
+        repository.deleteById(id);
+    }
+
+    //Set all instances to reference variables
+    private BookEntity setEntityInstances(BookEntity bookEntity, Book book, MultipartFile image) throws IOException {
+        //Set ownerUser to bookEntity
+        bookEntity.setOwnerUser(mapper.convertValue(userRepository.findById(book.getOwnerUser().getId()), UserEntity.class));
+        //Set genreEntity to bookEntity
+        bookEntity.setGenre(mapper.convertValue(genreRepository.findById(book.getGenre().getId()), GenreEntity.class));
+        //Set publicationEntity to bookEntity
+        bookEntity.setPublication(mapper.convertValue(publicationRepository.findById(book.getPublication().getId()), PublicationEntity.class));
+        //Set authorEntity to bookEntity
+        bookEntity.setAuthor(mapper.convertValue(authorRepository.findById(book.getAuthor().getId()), AuthorEntity.class));
+
+        //Set image file path to bookEntity
+        String saveDir = "src/main/resources/static/images/book/";
+        String originalFileName = StringUtils.cleanPath(Objects.requireNonNull(image.getOriginalFilename()));
+        String imageName = (book.getId() + "-" + originalFileName.replace(" ", "_"));
+        bookEntity.setImage("/images/book/" + imageName);
+
+        //Save image in the file system
+        FileSaveUtil.saveFile(saveDir, imageName, image);
+
+        return bookEntity;
     }
 }
