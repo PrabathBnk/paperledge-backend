@@ -23,4 +23,5 @@ public class Book {
     private Author author;
     private Publication publication;
     private User ownerUser;
+    private String image;
 }

@@ -1,5 +1,7 @@
 package edu.icet.entity;
 
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,6 +22,7 @@ public class GenreEntity {
     @Column(nullable = false)
     private String name;
 
-    @OneToMany(mappedBy = "genre")
+    @OneToMany(mappedBy = "genre", fetch = FetchType.EAGER)
+    @JsonManagedReference("genre")
     private List<BookEntity> books;
 }

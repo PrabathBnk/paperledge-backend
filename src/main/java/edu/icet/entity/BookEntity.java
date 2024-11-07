@@ -1,5 +1,6 @@
 package edu.icet.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -28,17 +29,23 @@ public class BookEntity {
     @Column(nullable = false)
     private String mode;
     private String description;
+    @Column(nullable = false)
+    private String image;
 
-    @ManyToOne(cascade = CascadeType.ALL, optional = false)
+    @ManyToOne(cascade = CascadeType.ALL, optional = false, fetch = FetchType.EAGER)
+    @JsonBackReference("genre")
     private GenreEntity genre;
 
-    @ManyToOne(cascade = CascadeType.ALL, optional = false)
+    @ManyToOne(cascade = CascadeType.ALL, optional = false, fetch = FetchType.EAGER)
+    @JsonBackReference("author")
     private AuthorEntity author;
 
-    @ManyToOne(cascade = CascadeType.ALL, optional = false)
+    @ManyToOne(cascade = CascadeType.ALL, optional = false, fetch = FetchType.EAGER)
+    @JsonBackReference("publication")
     private PublicationEntity publication;
 
-    @OneToOne(cascade = CascadeType.ALL, optional = false)
+    @OneToOne(cascade = CascadeType.ALL, optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "owner_user")
+    @JsonBackReference("user")
     private UserEntity ownerUser;
 }

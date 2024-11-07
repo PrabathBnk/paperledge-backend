@@ -1,5 +1,7 @@
 package edu.icet.entity;
 
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,5 +26,6 @@ public class PublicationEntity {
     private String address;
 
     @OneToMany(mappedBy = "publication")
+    @JsonManagedReference("publication")
     private List<BookEntity> books;
 }
