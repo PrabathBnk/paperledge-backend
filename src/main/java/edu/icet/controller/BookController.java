@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -57,5 +58,15 @@ public class BookController {
     @DeleteMapping
     public void deleteById(@RequestParam("id") String id){
         service.deleteById(id);
+    }
+
+    @GetMapping("/all")
+    public List<Book> getAll(){
+        return service.getAllBooks();
+    }
+
+    @GetMapping("/filter/owner-user")
+    public List<Book> filterBookByOwner(@RequestParam("ownerUserId") String ownerUserId) {
+        return service.getBooksByOwner(ownerUserId);
     }
 }

@@ -9,4 +9,6 @@ import java.util.Optional;
 public interface BookRepository extends CrudRepository<BookEntity, String> {
     @Query(value = "SELECT MAX(id) FROM Book", nativeQuery = true)
     Optional<String> findTopId();
+    @Query(value = "SELECT * FROM Book WHERE owner_user=?", nativeQuery = true)
+    Iterable<BookEntity> findByOwnerUser(String ownerUser);
 }

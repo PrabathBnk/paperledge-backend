@@ -15,6 +15,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -42,15 +44,7 @@ public class BookServiceImpl implements BookService {
         if (optionalBookEntity.isEmpty()) return null;
 
         BookEntity bookEntity = optionalBookEntity.get();
-        Book book = mapper.convertValue(bookEntity, Book.class);
-
-        //Set relationship objects to references
-        book.setGenre(mapper.convertValue(bookEntity.getGenre(), Genre.class));
-        book.setAuthor(mapper.convertValue(bookEntity.getAuthor(), Author.class));
-        book.setPublication(mapper.convertValue(bookEntity.getPublication(), Publication.class));
-        book.setOwnerUser(mapper.convertValue(bookEntity.getOwnerUser(), User.class));
-
-        return book;
+        return setDTOInstances(mapper.convertValue(bookEntity, Book.class), bookEntity);
     }
 
     @Override
@@ -61,6 +55,16 @@ public class BookServiceImpl implements BookService {
     @Override
     public void deleteById(String id) {
         repository.deleteById(id);
+    }
+
+    @Override
+    public List<Book> getAllBooks() {
+        return iterableToList(repository.findAll());
+    }
+
+    @Override
+    public List<Book> getBooksByOwner(String ownerUserId) {
+        return iterableToList(repository.findByOwnerUser(ownerUserId));
     }
 
     //Set all instances to reference variables
@@ -89,5 +93,21 @@ public class BookServiceImpl implements BookService {
     private String createBookName(Book book, String originalName){
         String[] splitStrings = originalName.split("\\.");
         return (book.getId() + "-" + book.getTitle() + "." + splitStrings[splitStrings.length - 1].replace(" ", "_"));
+    }
+
+    private Book setDTOInstances(Book book, BookEntity bookEntity) {
+        //Set relationship objects to references
+        book.setGenre(mapper.convertValue(bookEntity.getGenre(), Genre.class));
+        book.setAuthor(mapper.convertValue(bookEntity.getAuthor(), Author.class));
+        book.setPublication(mapper.convertValue(bookEntity.getPublication(), Publication.class));
+        book.setOwnerUser(mapper.convertValue(bookEntity.getOwnerUser(), User.class));
+
+        return book;
+    }
+
+    private List<Book> iterableToList(Iterable<BookEntity> bookEntityIterable) {
+        List<Book> bookList = new ArrayList<>();
+        bookEntityIterable.forEach(bookEntity -> bookList.add(setDTOInstances(mapper.convertValue(bookEntity, Book.class), bookEntity)));
+        return bookList;
     }
 }
