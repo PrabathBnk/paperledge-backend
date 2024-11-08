@@ -19,7 +19,7 @@ import java.util.List;
 public class PublicationEntity {
     @Id
     private String id;
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String name;
     @Column(name = "contact_number")
     private String contactNumber;

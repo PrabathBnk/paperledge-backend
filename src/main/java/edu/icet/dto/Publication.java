@@ -17,4 +17,8 @@ public class Publication {
     private String contactNumber;
     private String address;
     private List<Book> books;
+
+    public Publication(String name){
+        this.name = name;
+    }
 }

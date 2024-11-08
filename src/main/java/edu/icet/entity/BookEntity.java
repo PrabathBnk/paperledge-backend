@@ -28,6 +28,7 @@ public class BookEntity {
     private int quantity;
     @Column(nullable = false)
     private String mode;
+    @Column(columnDefinition = "TEXT")
     private String description;
     @Column(nullable = false)
     private String image;

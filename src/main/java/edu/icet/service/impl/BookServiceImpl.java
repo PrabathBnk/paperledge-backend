@@ -4,8 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.icet.dto.*;
 import edu.icet.entity.*;
 import edu.icet.repository.*;
+import edu.icet.service.AuthorService;
 import edu.icet.service.BookService;
+import edu.icet.service.PublicationService;
 import edu.icet.util.FileSaveUtil;
+import edu.icet.util.GenerateIdUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -23,11 +26,12 @@ public class BookServiceImpl implements BookService {
     private final ObjectMapper mapper;
     private final UserRepository userRepository;
     private final GenreRepository genreRepository;
-    private final PublicationRepository publicationRepository;
-    private final AuthorRepository authorRepository;
+    private final PublicationService publicationService;
+    private final AuthorService authorService;
 
     @Override
     public void addBook(Book book, MultipartFile image) throws IOException {
+        book.setId(GenerateIdUtil.generateId("BK", 4, repository.findTopId().orElse("000")));
         repository.save(setEntityInstances(mapper.convertValue(book, BookEntity.class), book, image));
     }
 
@@ -66,19 +70,24 @@ public class BookServiceImpl implements BookService {
         //Set genreEntity to bookEntity
         bookEntity.setGenre(mapper.convertValue(genreRepository.findById(book.getGenre().getId()), GenreEntity.class));
         //Set publicationEntity to bookEntity
-        bookEntity.setPublication(mapper.convertValue(publicationRepository.findById(book.getPublication().getId()), PublicationEntity.class));
+        bookEntity.setPublication(mapper.convertValue(publicationService.getPublicationByName(book.getPublication().getName()), PublicationEntity.class));
         //Set authorEntity to bookEntity
-        bookEntity.setAuthor(mapper.convertValue(authorRepository.findById(book.getAuthor().getId()), AuthorEntity.class));
+        bookEntity.setAuthor(mapper.convertValue(authorService.getAuthorByName(book.getAuthor().getName()), AuthorEntity.class));
 
         //Set image file path to bookEntity
         String saveDir = "src/main/resources/static/images/book/";
-        String originalFileName = StringUtils.cleanPath(Objects.requireNonNull(image.getOriginalFilename()));
-        String imageName = (book.getId() + "-" + originalFileName.replace(" ", "_"));
+
+        String imageName = createBookName(book, StringUtils.cleanPath(Objects.requireNonNull(image.getOriginalFilename())));
         bookEntity.setImage("/images/book/" + imageName);
 
         //Save image in the file system
         FileSaveUtil.saveFile(saveDir, imageName, image);
 
         return bookEntity;
+    }
+
+    private String createBookName(Book book, String originalName){
+        String[] splitStrings = originalName.split("\\.");
+        return (book.getId() + "-" + book.getTitle() + "." + splitStrings[splitStrings.length - 1].replace(" ", "_"));
     }
 }

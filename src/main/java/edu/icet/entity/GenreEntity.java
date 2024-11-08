@@ -19,7 +19,7 @@ import java.util.List;
 public class GenreEntity {
     @Id
     private String id;
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String name;
 
     @OneToMany(mappedBy = "genre", fetch = FetchType.EAGER)
