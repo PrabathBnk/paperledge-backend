@@ -42,8 +42,10 @@ public class UserEntity {
     @Column(name = "postal_code")
     private String postalCode;
     private String country;
+    @Column(name = "profile_picture", nullable = false)
+    private String profilePicture;
 
-    @OneToMany(mappedBy = "ownerUser")
+    @OneToMany(mappedBy = "ownerUser", cascade = {CascadeType.MERGE})
     @JsonManagedReference("user")
     private List<BookEntity> books;
 }

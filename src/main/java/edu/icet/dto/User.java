@@ -27,4 +27,5 @@ public class User {
     private String postalCode;
     private String country;
     private List<Book> books;
+    private String profilePicture;
 }
