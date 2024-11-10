@@ -49,4 +49,9 @@ public class UserServiceImpl implements UserService {
     public boolean isUsernameAlreadyExits(String userName) {
         return repository.findByUsername(userName).isPresent();
     }
+
+    @Override
+    public User getUserById(String id) {
+        return repository.findById(id).map(entity -> mapper.convertValue(entity, User.class)).orElse(null);
+    }
 }
