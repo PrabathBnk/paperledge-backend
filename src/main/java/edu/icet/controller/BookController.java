@@ -45,13 +45,17 @@ public class BookController {
     }
 
     @PutMapping
-    public ResponseEntity<String> update(@RequestParam("book") String bookAsString, @RequestParam("image") MultipartFile bookImage){
+    public ResponseEntity<Map<String, String>> update(@RequestParam("book") String bookAsString, @RequestParam(value = "image", required = false) MultipartFile bookImage){
         try {
             Book book = mapper.readValue(bookAsString, Book.class);
             service.update(book, bookImage);
-            return new ResponseEntity<>("Book added successfully", HttpStatus.ACCEPTED);
+            Map<String, String> response = new HashMap<>();
+            response.put("response", "Book updated successfully.");
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } catch (IOException e) {
-            return new ResponseEntity<>("Something went wrong", HttpStatus.BAD_REQUEST);
+            Map<String, String> error = new HashMap<>();
+            error.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
         }
     }
 

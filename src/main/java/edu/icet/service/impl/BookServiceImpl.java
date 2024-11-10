@@ -78,21 +78,23 @@ public class BookServiceImpl implements BookService {
         //Set authorEntity to bookEntity
         bookEntity.setAuthor(mapper.convertValue(authorService.getAuthorByName(book.getAuthor().getName()), AuthorEntity.class));
 
-        //Set image file path to bookEntity
-        String saveDir = "src/main/resources/static/images/book/";
+        if (null!=image){
+            //Set image file path to bookEntity
+            String saveDir = "F:/iCET/Individual Project/images/";
 
-        String imageName = createBookName(book, StringUtils.cleanPath(Objects.requireNonNull(image.getOriginalFilename())));
-        bookEntity.setImage("/images/book/" + imageName);
+            String imageName = createBookName(book, StringUtils.cleanPath(Objects.requireNonNull(image.getOriginalFilename())));
+            bookEntity.setImage(imageName);
 
-        //Save image in the file system
-        FileSaveUtil.saveFile(saveDir, imageName, image);
+            //Save image in the file system
+            FileSaveUtil.saveFile(saveDir, imageName, image);
+        }
 
         return bookEntity;
     }
 
     private String createBookName(Book book, String originalName){
         String[] splitStrings = originalName.split("\\.");
-        return (book.getId() + "-" + book.getTitle() + "." + splitStrings[splitStrings.length - 1].replace(" ", "_"));
+        return (book.getId() + "." + splitStrings[splitStrings.length - 1]);
     }
 
     private Book setDTOInstances(Book book, BookEntity bookEntity) {
