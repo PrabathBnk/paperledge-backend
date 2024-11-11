@@ -52,4 +52,8 @@ public class UserEntity {
     @OneToMany(mappedBy = "user", cascade = {CascadeType.MERGE, CascadeType.DETACH})
     @JsonManagedReference("user-cart")
     private List<CartEntity> cartItems;
+
+    @OneToMany(mappedBy = "user")
+    @JsonManagedReference("order-user")
+    private List<OrderEntity> orders;
 }

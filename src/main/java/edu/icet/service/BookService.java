@@ -13,4 +13,5 @@ public interface BookService {
     void deleteById(String id);
     List<Book> getAllBooks();
     List<Book> getBooksByOwner(String ownerUserId);
+    void updateQuantity(String id, int newQuantity);
 }

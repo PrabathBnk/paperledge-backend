@@ -67,6 +67,15 @@ public class BookServiceImpl implements BookService {
         return iterableToList(repository.findByOwnerUser(ownerUserId));
     }
 
+    @Override
+    public void updateQuantity(String id, int newQuantity) {
+        Optional<BookEntity> bookEntity = repository.findById(id);
+        if (bookEntity.isPresent()) {
+            bookEntity.get().setQuantity(newQuantity);
+            repository.save(bookEntity.get());
+        }
+    }
+
     //Set all instances to reference variables
     private BookEntity setEntityInstances(BookEntity bookEntity, Book book, MultipartFile image) throws IOException {
         //Set ownerUser to bookEntity
