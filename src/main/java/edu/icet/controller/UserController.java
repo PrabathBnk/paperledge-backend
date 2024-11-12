@@ -47,4 +47,8 @@ public class UserController {
         return service.getUserByEmail(email);
     }
 
+    @PutMapping("/address")
+    public void updateAddress(@RequestBody User user){
+        service.updateAddress(user);
+    }
 }

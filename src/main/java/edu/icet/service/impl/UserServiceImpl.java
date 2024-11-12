@@ -54,4 +54,9 @@ public class UserServiceImpl implements UserService {
     public User getUserById(String id) {
         return repository.findById(id).map(entity -> mapper.convertValue(entity, User.class)).orElse(null);
     }
+
+    @Override
+    public void updateAddress(User user) {
+        repository.save(mapper.convertValue(user, UserEntity.class));
+    }
 }

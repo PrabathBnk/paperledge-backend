@@ -14,6 +14,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -47,6 +48,7 @@ public class OrderServiceImpl implements OrderService {
         //Save Order details
         orderDetails.forEach(orderDetail -> {
             orderDetail.setOrder(mapper.convertValue(orderEntity, Order.class));
+            orderDetail.getOrder().setUser(order.getUser());
             orderDetailService.save(orderDetail);
         });
         order.setOrderDetails(null);
@@ -54,7 +56,47 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<Order> getAllByUserId(String id) {
-        Iterable<OrderEntity> orderEntityIterable = repository.findAllByUserId(id);
+        return entityIterableToDtoList(repository.findAllByUserId(id));
+    }
+
+    @Override
+    public Order getByOrderId(String id) {
+        return mapper.convertValue(repository.findById(id).orElse(null), Order.class);
+    }
+
+    @Override
+    public void updateStatus(String id, String status) {
+        Optional<OrderEntity> orderEntity = repository.findById(id);
+        if (orderEntity.isPresent()) {
+            orderEntity.get().setStatus(mapper.convertValue(statusService.getByName(status), StatusEntity.class));
+            repository.save(orderEntity.get());
+        }
+    }
+
+    @Override
+    public void updateEstDate(String id, String estDate) {
+        Optional<OrderEntity> orderEntity = repository.findById(id);
+        if (orderEntity.isPresent()) {
+            orderEntity.get().setEstimatedDeliveryDate(LocalDate.parse(estDate));
+            repository.save(orderEntity.get());
+        }
+    }
+
+    @Override
+    public void updateTrackingNumber(String id, int trackingNumber) {
+        Optional<OrderEntity> orderEntity = repository.findById(id);
+        if (orderEntity.isPresent()) {
+            orderEntity.get().setTrackingNumber(trackingNumber);
+            repository.save(orderEntity.get());
+        }
+    }
+
+    @Override
+    public List<Order> getAllByBookOwnerId(String id) {
+        return entityIterableToDtoList(repository.findAllByBookOwnerUserId(id));
+    }
+
+    private List<Order> entityIterableToDtoList(Iterable<OrderEntity> orderEntityIterable){
         List<Order> orderList = new ArrayList<>();
 
         orderEntityIterable.forEach(orderEntity -> {
@@ -68,10 +110,5 @@ public class OrderServiceImpl implements OrderService {
         });
 
         return orderList;
-    }
-
-    @Override
-    public Order getByOrderId(String id) {
-        return mapper.convertValue(repository.findById(id).orElse(null), Order.class);
     }
 }

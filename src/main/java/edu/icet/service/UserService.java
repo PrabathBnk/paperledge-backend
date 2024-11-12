@@ -8,4 +8,5 @@ public interface UserService {
     User authenticateUser(User user);
     boolean isUsernameAlreadyExits(String userName);
     User getUserById(String id);
+    void updateAddress(User user);
 }
