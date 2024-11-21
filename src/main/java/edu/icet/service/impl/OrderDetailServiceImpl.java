@@ -44,7 +44,11 @@ public class OrderDetailServiceImpl implements OrderDetailService {
         Iterable<OrderDetailEntity> orderDetailEntities = repository.findAllByOrderId(id);
         List<OrderDetail> orderDetailList = new ArrayList<>();
 
-        orderDetailEntities.forEach(orderDetailEntity -> orderDetailList.add(mapper.convertValue(orderDetailEntity, OrderDetail.class)));
+        orderDetailEntities.forEach(orderDetailEntity -> {
+            OrderDetail orderDetail = mapper.convertValue(orderDetailEntity, OrderDetail.class);
+            orderDetail.setBook(bookService.getBookById(orderDetailEntity.getBook().getId()));
+            orderDetailList.add(orderDetail);
+        });
 
         return orderDetailList;
     }

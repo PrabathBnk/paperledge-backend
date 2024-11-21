@@ -5,10 +5,15 @@ import edu.icet.dto.*;
 import edu.icet.entity.*;
 import edu.icet.repository.OrderRepository;
 import edu.icet.service.*;
+import edu.icet.util.EmailSender;
 import edu.icet.util.GenerateIdUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.spring6.SpringTemplateEngine;
+import org.thymeleaf.templatemode.TemplateMode;
+import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -26,6 +31,7 @@ public class OrderServiceImpl implements OrderService {
     private final PaymentMethodService paymentMethodService;
     private final StatusService statusService;
     private final UserService userService;
+    private final EmailSender emailSender;
 
     @Transactional
     @Override
@@ -51,7 +57,8 @@ public class OrderServiceImpl implements OrderService {
             orderDetail.getOrder().setUser(order.getUser());
             orderDetailService.save(orderDetail);
         });
-        order.setOrderDetails(null);
+
+        sendInvoice(getByOrderId(order.getId()));
     }
 
     @Override
@@ -61,7 +68,13 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Order getByOrderId(String id) {
-        return mapper.convertValue(repository.findById(id).orElse(null), Order.class);
+        Optional<OrderEntity> orderEntity = repository.findById(id);
+        if (orderEntity.isEmpty()) return null;
+
+        Order order = mapper.convertValue(orderEntity.get(), Order.class);
+        order.setUser(mapper.convertValue(orderEntity.get().getUser(), User.class));
+        order.setOrderDetails(orderDetailService.getAllByOrderId(order.getId()));
+        return order;
     }
 
     @Override
@@ -110,5 +123,20 @@ public class OrderServiceImpl implements OrderService {
         });
 
         return orderList;
+    }
+
+    private void sendInvoice(Order order){
+        ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
+        templateResolver.setTemplateMode(TemplateMode.HTML);
+        templateResolver.setSuffix(".html");
+
+        Context context = new Context();
+        context.setVariable("order", order);
+
+        SpringTemplateEngine templateEngine = new SpringTemplateEngine();
+        templateEngine.setTemplateResolver(templateResolver);
+
+        String invoice = templateEngine.process("templates/invoice_template.html", context);
+        emailSender.sendEmailWithHtmlContent("#"+ order.getId() +"Order Placed Successfully.", order.getUser().getEmail(), invoice);
     }
 }
