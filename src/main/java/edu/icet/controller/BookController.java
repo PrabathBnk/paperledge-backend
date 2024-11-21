@@ -73,4 +73,19 @@ public class BookController {
     public List<Book> filterBookByOwner(@RequestParam("ownerUserId") String ownerUserId) {
         return service.getBooksByOwner(ownerUserId);
     }
+
+    @GetMapping("/filter/title")
+    public List<Book> filterBookByTitle(@RequestParam("title") String title){
+        return service.filterBooksByTitle(title);
+    }
+
+    @GetMapping("/filter/author")
+    public List<Book> filterBookByAuthor(@RequestParam("author") String author){
+        return service.filterBooksByAuthor(author);
+    }
+
+    @GetMapping("/filter/isbn")
+    public Book filterBookByIsbn(@RequestParam("isbn") String isbn){
+        return service.filterBooksByIsbn(isbn);
+    }
 }

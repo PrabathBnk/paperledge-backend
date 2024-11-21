@@ -11,4 +11,9 @@ public interface BookRepository extends CrudRepository<BookEntity, String> {
     Optional<String> findTopId();
     @Query(value = "SELECT * FROM Book WHERE owner_user=?", nativeQuery = true)
     Iterable<BookEntity> findByOwnerUser(String ownerUser);
+    @Query(value = "SELECT * FROM book WHERE title LIKE ?", nativeQuery = true)
+    Iterable<BookEntity> findByTitle(String title);
+    @Query(value = "SELECT book.* FROM book INNER JOIN author ON book.author_id = author.id WHERE author.name LIKE ?", nativeQuery = true)
+    Iterable<BookEntity> findByAuthor(String author);
+    BookEntity findByIsbn(String isbn);
 }

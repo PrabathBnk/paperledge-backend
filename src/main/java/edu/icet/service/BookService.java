@@ -14,4 +14,7 @@ public interface BookService {
     List<Book> getAllBooks();
     List<Book> getBooksByOwner(String ownerUserId);
     void updateQuantity(String id, int newQuantity);
+    List<Book> filterBooksByTitle(String title);
+    List<Book> filterBooksByAuthor(String author);
+    Book filterBooksByIsbn(String isbn);
 }

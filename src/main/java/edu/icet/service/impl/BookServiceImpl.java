@@ -44,7 +44,7 @@ public class BookServiceImpl implements BookService {
         if (optionalBookEntity.isEmpty()) return null;
 
         BookEntity bookEntity = optionalBookEntity.get();
-        return setDTOInstances(mapper.convertValue(bookEntity, Book.class), bookEntity);
+        return setDTOInstances(bookEntity);
     }
 
     @Override
@@ -74,6 +74,21 @@ public class BookServiceImpl implements BookService {
             bookEntity.get().setQuantity(newQuantity);
             repository.save(bookEntity.get());
         }
+    }
+
+    @Override
+    public List<Book> filterBooksByTitle(String title) {
+        return iterableToList(repository.findByTitle("%"+title+"%"));
+    }
+
+    @Override
+    public List<Book> filterBooksByAuthor(String author) {
+        return iterableToList(repository.findByAuthor("%"+author+"%"));
+    }
+
+    @Override
+    public Book filterBooksByIsbn(String isbn) {
+        return setDTOInstances(repository.findByIsbn(isbn));
     }
 
     //Set all instances to reference variables
@@ -106,7 +121,9 @@ public class BookServiceImpl implements BookService {
         return (book.getId() + "." + splitStrings[splitStrings.length - 1]);
     }
 
-    private Book setDTOInstances(Book book, BookEntity bookEntity) {
+    private Book setDTOInstances(BookEntity bookEntity) {
+        Book book = mapper.convertValue(bookEntity, Book.class);
+
         //Set relationship objects to references
         book.setGenre(mapper.convertValue(bookEntity.getGenre(), Genre.class));
         book.setAuthor(mapper.convertValue(bookEntity.getAuthor(), Author.class));
@@ -118,7 +135,7 @@ public class BookServiceImpl implements BookService {
 
     private List<Book> iterableToList(Iterable<BookEntity> bookEntityIterable) {
         List<Book> bookList = new ArrayList<>();
-        bookEntityIterable.forEach(bookEntity -> bookList.add(setDTOInstances(mapper.convertValue(bookEntity, Book.class), bookEntity)));
+        bookEntityIterable.forEach(bookEntity -> bookList.add(setDTOInstances(bookEntity)));
         return bookList;
     }
 }

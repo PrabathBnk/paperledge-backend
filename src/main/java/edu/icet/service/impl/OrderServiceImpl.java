@@ -105,7 +105,7 @@ public class OrderServiceImpl implements OrderService {
             order.setStatus(mapper.convertValue(orderEntity.getStatus(), Status.class));
             order.setUser(mapper.convertValue(orderEntity.getUser(), User.class));
             order.setOrderDetails(orderDetailService.getAllByOrderId(order.getId()));
-            order.setUser(null);
+            order.getUser().setPassword(null);
             orderList.add(order);
         });
 
