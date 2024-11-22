@@ -96,7 +96,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void updateTrackingNumber(String id, int trackingNumber) {
+    public void updateTrackingNumber(String id, String trackingNumber) {
         Optional<OrderEntity> orderEntity = repository.findById(id);
         if (orderEntity.isPresent()) {
             orderEntity.get().setTrackingNumber(trackingNumber);

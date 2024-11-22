@@ -17,7 +17,7 @@ public class Order {
     private String id;
     private LocalDate date;
     private LocalTime time;
-    private int trackingNumber;
+    private String trackingNumber;
     private LocalDate estimatedDeliveryDate;
     private double netTotal;
     private PaymentMethod paymentMethod;

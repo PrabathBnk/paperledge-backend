@@ -41,7 +41,7 @@ public class OrderController {
     }
 
     @PutMapping("/tracking")
-    public void updateTrackingNum(@RequestParam("id") String orderId, @RequestParam("tracking") int trackingNumber){
+    public void updateTrackingNum(@RequestParam("id") String orderId, @RequestParam("tracking") String trackingNumber){
         service.updateTrackingNumber(orderId, trackingNumber);
     }
 

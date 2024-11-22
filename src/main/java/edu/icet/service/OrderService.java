@@ -10,6 +10,6 @@ public interface OrderService {
     Order getByOrderId(String id);
     void updateStatus(String id, String status);
     void updateEstDate(String id, String estDate);
-    void updateTrackingNumber(String id, int trackingNumber);
+    void updateTrackingNumber(String id, String trackingNumber);
     List<Order> getAllByBookOwnerId(String id);
 }

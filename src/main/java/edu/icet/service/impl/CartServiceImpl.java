@@ -35,6 +35,7 @@ public class CartServiceImpl implements CartService {
         CartEntity existingCartItem = getCartItem(cart);
         if (existingCartItem != null) {
             cartEntity.setQuantity(cart.getQuantity() + existingCartItem.getQuantity());
+            
             cartEntity.setId(existingCartItem.getId());
         }
         repository.save(cartEntity);

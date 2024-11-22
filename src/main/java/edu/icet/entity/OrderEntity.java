@@ -25,7 +25,7 @@ public class OrderEntity {
     private LocalDate date;
     @Column(nullable = false)
     private LocalTime time;
-    private int trackingNumber;
+    private String trackingNumber;
     @Column(name = "estimated_delivery_date")
     private LocalDate estimatedDeliveryDate;
     @Column(nullable = false, name = "net_total")
