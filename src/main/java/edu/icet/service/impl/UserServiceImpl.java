@@ -6,10 +6,13 @@ import edu.icet.entity.UserEntity;
 import edu.icet.repository.UserRepository;
 
 import edu.icet.service.UserService;
+import edu.icet.util.FileSaveUtil;
 import edu.icet.util.GenerateIdUtil;
 import edu.icet.util.PasswordEncodeUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.Optional;
@@ -58,5 +61,21 @@ public class UserServiceImpl implements UserService {
     @Override
     public void updateAddress(User user) {
         repository.save(mapper.convertValue(user, UserEntity.class));
+    }
+
+    @Transactional
+    @Override
+    public String updateProfilePicture(String id, MultipartFile image) {
+        String imageName = id + FileSaveUtil.getFileExtension(image.getOriginalFilename());
+
+        try{
+            //Save image in the file system
+            FileSaveUtil.saveFile("F:/iCET/Individual Project/images/", imageName, image);
+        } catch (Exception e) {
+            return null;
+        }
+
+        repository.updateProfilePictureById(id, imageName);
+        return imageName;
     }
 }

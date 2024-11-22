@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -50,5 +51,12 @@ public class UserController {
     @PutMapping("/address")
     public void updateAddress(@RequestBody User user){
         service.updateAddress(user);
+    }
+
+    @PutMapping("/profile-picture")
+    public ResponseEntity<Map<String, String>> updateProfilePicture(@RequestParam("id") String id, @RequestParam("image")MultipartFile image){
+        Map<String, String> response = new HashMap<>();
+        response.put("image", service.updateProfilePicture(id, image));
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
     }
 }

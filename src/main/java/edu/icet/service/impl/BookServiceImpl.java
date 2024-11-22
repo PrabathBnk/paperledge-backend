@@ -11,13 +11,11 @@ import edu.icet.util.FileSaveUtil;
 import edu.icet.util.GenerateIdUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -103,22 +101,16 @@ public class BookServiceImpl implements BookService {
         bookEntity.setAuthor(mapper.convertValue(authorService.getAuthorByName(book.getAuthor().getName()), AuthorEntity.class));
 
         if (null!=image){
-            //Set image file path to bookEntity
-            String saveDir = "F:/iCET/Individual Project/images/";
+            String imageName = book.getId() + FileSaveUtil.getFileExtension(image.getOriginalFilename());
 
-            String imageName = createBookName(book, StringUtils.cleanPath(Objects.requireNonNull(image.getOriginalFilename())));
+            //Set image file path to bookEntity
             bookEntity.setImage(imageName);
 
             //Save image in the file system
-            FileSaveUtil.saveFile(saveDir, imageName, image);
+            FileSaveUtil.saveFile("F:/iCET/Individual Project/images/", imageName, image);
         }
 
         return bookEntity;
-    }
-
-    private String createBookName(Book book, String originalName){
-        String[] splitStrings = originalName.split("\\.");
-        return (book.getId() + "." + splitStrings[splitStrings.length - 1]);
     }
 
     private Book setDTOInstances(BookEntity bookEntity) {
